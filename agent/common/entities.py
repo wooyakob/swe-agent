@@ -1,14 +1,36 @@
 from typing import List
 from pydantic import BaseModel, Field
 
-class AtomicTask(BaseModel):
-    atomic_task : str = Field(description="The atomic task that needs to be done to implement the step, meaning a single diff edit in the file it self that should be executed")
-    additional_context: str = Field("", description="Extract from the research any additional context that can be useful to know to complete this task")
 
-class ImplementationTask(BaseModel):
-    file_path : str  = Field(description="The file path to be affected by the implementation step")
-    logical_task: str = Field(description="The description of the logical task of what we want to achieve by editing or creating the file")
-    atomic_tasks : List[AtomicTask] = Field(description="The atomic tasks that need to be done to implement the step")
+class POCStep(BaseModel):
+    poc_step: str = Field(
+        description="A single concrete step to create or modify this POC artifact, e.g. write a specific function, section, or code block"
+    )
+    additional_context: str = Field(
+        "",
+        description="Couchbase SDK patterns, API details, or feature specifics relevant to completing this step"
+    )
 
-class ImplementationPlan(BaseModel):
-    tasks: List[ImplementationTask] = Field( description="The list of tasks that need to be done to implement the plan")
+
+class POCArtifact(BaseModel):
+    file_path: str = Field(
+        description="Full file path for this artifact (e.g. ./poc_workspace/app.py, ./poc_workspace/discovery_questions.md)"
+    )
+    artifact_description: str = Field(
+        description="What this artifact is, what it demonstrates, and its purpose in the SE engagement"
+    )
+    poc_steps: List[POCStep] = Field(
+        description="Ordered concrete steps to create this artifact"
+    )
+
+
+class SEEngagementPlan(BaseModel):
+    customer_summary: str = Field(
+        description="Concise summary of the customer's industry, use case, pain points, and key requirements"
+    )
+    relevant_couchbase_features: List[str] = Field(
+        description="Couchbase features and products most relevant to this customer's needs"
+    )
+    artifacts: List[POCArtifact] = Field(
+        description="Ordered list of deliverable artifacts to produce for this engagement"
+    )
