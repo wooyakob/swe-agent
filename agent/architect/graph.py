@@ -106,9 +106,11 @@ def convert_tools_messages_to_ai_and_human(scratchpad: List[AnyMessage]):
     for message in scratchpad:
         if message.type == "ai":
             if message.tool_calls:
-                tool_name = message.tool_calls[0]["name"]
-                tool_args = json.dumps(message.tool_calls[0]["args"])
-                messages.append(AIMessage(content=f"Called tool {tool_name} with args: {tool_args}"))
+                calls = [
+                    f"Called tool {tc['name']} with args: {json.dumps(tc['args'])}"
+                    for tc in message.tool_calls
+                ]
+                messages.append(AIMessage(content="\n".join(calls)))
             else:
                 messages.append(message)
         elif message.type == "tool":

@@ -72,7 +72,9 @@ def should_continue_implementation_research(state: SEPOCState):
 def prepare_for_implementation(state: SEPOCState):
     current_artifact = state.engagement_plan.artifacts[state.current_task_idx]
     file_path = current_artifact.file_path
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    dir_name = os.path.dirname(file_path)
+    if dir_name:
+        os.makedirs(dir_name, exist_ok=True)
     try:
         with open(file_path, "r") as f:
             file_content = f.read()
@@ -97,9 +99,11 @@ def convert_tools_messages_to_ai_and_human(scratchpad: List[AnyMessage]):
     for message in scratchpad:
         if message.type == "ai":
             if message.tool_calls:
-                tool_name = message.tool_calls[0]["name"]
-                tool_args = json.dumps(message.tool_calls[0]["args"])
-                messages.append(AIMessage(content=f"Called tool {tool_name} with args: {tool_args}"))
+                calls = [
+                    f"Called tool {tc['name']} with args: {json.dumps(tc['args'])}"
+                    for tc in message.tool_calls
+                ]
+                messages.append(AIMessage(content="\n".join(calls)))
             else:
                 messages.append(message)
         elif message.type == "tool":

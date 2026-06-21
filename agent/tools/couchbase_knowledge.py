@@ -649,7 +649,7 @@ def get_couchbase_feature_details(feature: str) -> str:
     Args:
         feature: One of: kv, n1ql, fts, eventing, xdcr, transactions, security, sdk, data_model, performance
     """
-    key = feature.lower().strip()
+    key = feature.lower().strip().replace(" ", "_").replace("-", "_")
     return _FEATURE_DETAILS.get(key, f"Unknown feature '{feature}'. Available: {', '.join(_FEATURE_DETAILS.keys())}")
 
 
@@ -661,7 +661,7 @@ def get_sdk_example(example_type: str) -> str:
         example_type: One of: python_connect, python_crud, python_query, python_fts,
                       python_transactions, python_async
     """
-    key = example_type.lower().strip()
+    key = example_type.lower().strip().replace(" ", "_").replace("-", "_")
     return _SDK_EXAMPLES.get(key, f"Unknown example '{example_type}'. Available: {', '.join(_SDK_EXAMPLES.keys())}")
 
 
@@ -674,7 +674,7 @@ def get_discovery_questions(category: str) -> str:
                   geo_distribution, search, mobile_edge, analytics, operations,
                   security_compliance, migration
     """
-    key = category.lower().strip()
+    key = category.lower().strip().replace(" ", "_").replace("-", "_")
     questions = _DISCOVERY_CATEGORIES.get(key)
     if not questions:
         return f"Unknown category '{category}'. Available: {', '.join(_DISCOVERY_CATEGORIES.keys())}"
